@@ -1,43 +1,4 @@
-$(function(){
-    var gol = new GameOfLife();
-    gol.init();
-    // use jquery to bind event to space key
-    $(document).keypress(function(e){
-        if(e.keyCode == 32){
-            gol.toggle();
-        }
-        else if (e.keyCode == 'r'.charCodeAt(0)){
-            gol.clear();
-        }
-        else if (e.keyCode == 's'.charCodeAt(0) && !gol.isRunning){
-            gol.step();
-        }
-        else if (e.keyCode == '1'.charCodeAt(0) && !gol.isRunning){
-            gol.clear();
-            gol.loadLayout(GameOfLife.initGliderGun1(), GameOfLife.Layouts.TOP_CENTER);
-        }
-        else if (e.keyCode == '2'.charCodeAt(0) && !gol.isRunning){
-            gol.clear();
-            gol.loadLayout(GameOfLife.initFlower1(), GameOfLife.Layouts.CENTER);
-        }
-        else if (e.keyCode == '3'.charCodeAt(0) && !gol.isRunning){
-            gol.clear();
-            gol.loadLayout(GameOfLife.initGliderGun1(), GameOfLife.Layouts.TOP_CENTER);
-            gol.loadLayout(GameOfLife.initFlower1(), GameOfLife.Layouts.BOTTOM_LEFT);
-        }
-        else if (e.keyCode == '4'.charCodeAt(0) && !gol.isRunning){
-            gol.clear();
-            gol.loadLayout(GameOfLife.maxDensityCells(), GameOfLife.Layouts.CENTER);
-        }
-    });
-    $(window).resize(function(){
-        console.log("h")
-        gol.resize();
-    });
-
-});
-
-class GameOfLife {
+export default class GameOfLife {
 
     static Layouts = {
         CENTER: 0,
@@ -51,7 +12,6 @@ class GameOfLife {
         RIGHT_CENTER: 8
     }
 
-    // constructor
     constructor() {
         this.canvas = document.getElementById("gol-main");
         this.width = $(this.canvas).width();
@@ -65,14 +25,12 @@ class GameOfLife {
         this.timer = null;
     }
 
-    // init
     init() {
         this.canvas.addEventListener("click", this.clickCanvas.bind(this));
         this.initCells();
         this.draw();
     }
 
-    // initCells
     initCells(old = []) {
         this.cells = [];
         for (var i = 0; i < this.rows; i++) {
@@ -90,7 +48,6 @@ class GameOfLife {
         }.bind(this));
     }
 
-    // clickCanvas
     clickCanvas(e) {
         var i = this.getRow(e.target);
         var j = this.getColumn(e.target);
@@ -103,7 +60,6 @@ class GameOfLife {
         }
     }
 
-    // draw
     draw() {
         $(this.canvas).html("");
         for (var i = 0; i < this.rows; i++) {
@@ -119,14 +75,12 @@ class GameOfLife {
         }
     }
 
-    // start
     start() {
         this.running = true;
         this.timer = setInterval(this.next.bind(this), this.interval);
         $(this.canvas).css({backgroundColor: "#0f0"});
     }
 
-    // stop
     stop() {
         this.running = false;
         if (this.timer) {
@@ -136,7 +90,6 @@ class GameOfLife {
         $(this.canvas).css({backgroundColor: "#f00"});
     }
 
-    // toggle
     toggle() {
         if (this.running) {
             this.stop();
@@ -145,7 +98,6 @@ class GameOfLife {
         }
     }
 
-    // next
     next() {
         var nextCells = [];
         for (var i = 0; i < this.rows; i++) {
@@ -163,13 +115,11 @@ class GameOfLife {
         this.cells = nextCells;
     }
 
-    // step
     step() {
         this.stop();
         this.next();
     }
 
-    // getNextState
     getNextState(i, j) {
         var count = 0;
         for (var ii = -1; ii <= 1; ii++) {
@@ -202,13 +152,11 @@ class GameOfLife {
         }
     }
 
-    // clear
     clear() {
         this.initCells();
         this.draw();
     }
 
-    // random
     random() {
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
@@ -218,7 +166,6 @@ class GameOfLife {
         this.draw();
     }
 
-    // setSpeed
     setSpeed(speed) {
         this.interval = 1000 / speed;
         if (this.running) {
@@ -227,7 +174,6 @@ class GameOfLife {
         }
     }
 
-    // setCellSize
     setCellSize(cellSize) {
         this.cellSize = cellSize;
         this.cols = this.width / this.cellSize;
@@ -236,7 +182,6 @@ class GameOfLife {
         this.draw();
     }
 
-    // setWidth
     setWidth(width) {
         this.width = width;
         this.cols = this.width / this.cellSize;
@@ -245,7 +190,6 @@ class GameOfLife {
         this.draw();
     }
 
-    // setHeight
     setHeight(height) {
         this.height = height;
         this.rows = this.height / this.cellSize;
@@ -254,7 +198,6 @@ class GameOfLife {
         this.draw();
     }
 
-    // setRows
     setRows(rows) {
         this.rows = rows;
         this.height = this.rows * this.cellSize;
@@ -263,7 +206,6 @@ class GameOfLife {
         this.draw();
     }
 
-    // setCols
     setCols(cols) {
         this.cols = cols;
         this.width = this.cols * this.cellSize;
@@ -272,7 +214,6 @@ class GameOfLife {
         this.draw();
     }
 
-    // setCellSize
     setCellSize(cellSize) {
         this.cellSize = cellSize;
         this.cols = this.width / this.cellSize;
@@ -298,10 +239,8 @@ class GameOfLife {
         this.draw();
     }
 
-    // loadLayout, layout is an array of arrays of 0s and 1s
     loadLayout(layout, layoutPos) {
         this.stop();
-        // this.clear();
         var rowOffset;
         var colOffset;
         if (layoutPos == GameOfLife.Layouts.CENTER) {
@@ -316,10 +255,6 @@ class GameOfLife {
         } else if (layoutPos == GameOfLife.Layouts.BOTTOM_LEFT) {
             rowOffset = this.rows - layout.length;
             colOffset = 0;
-            console.log(this.rows);
-            console.log(layout.length);
-            console.log(rowOffset);
-            console.log(colOffset);
         } else if (layoutPos == GameOfLife.Layouts.BOTTOM_RIGHT) {
             rowOffset = this.rows - layout.length;
             colOffset = this.cols - layout[0].length;
