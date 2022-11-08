@@ -12,14 +12,15 @@ export default class GameOfLife {
         RIGHT_CENTER: 8
     }
 
-    constructor() {
+    constructor(cellSize) {
         this.canvas = document.getElementById("gol-main");
-        this.width = $(this.canvas).width();
-        this.height = $(this.canvas).height();
-        this.cellSize = 25;
+        this.width = this.canvas.clientWidth;
+        this.height = this.canvas.clientHeight;
+        this.cellSize = cellSize;
         this.cols = parseInt(this.width / this.cellSize) - 2;
         this.rows = parseInt(this.height / this.cellSize) - 2;
         this.cells = [];
+        this.cellsDomElements = [];
         this.running = false;
         this.interval = 100;
         this.timer = null;
@@ -27,8 +28,10 @@ export default class GameOfLife {
 
     init() {
         this.canvas.addEventListener("click", this.clickCanvas.bind(this));
+        this.canvas.classList.add("stopped");
         this.initCells();
         this.draw();
+        console.log(this);
     }
 
     initCells(old = []) {
@@ -49,36 +52,49 @@ export default class GameOfLife {
     }
 
     clickCanvas(e) {
-        var i = this.getRow(e.target);
-        var j = this.getColumn(e.target);
-        if (this.cells[i][j] == 1) {
-            this.cells[i][j] = 0;
-            $(e.target).removeClass("alive");
-        } else {
-            this.cells[i][j] = 1;
-            $(e.target).addClass("alive");
+        if (e.target.className.indexOf("cell") != -1) {
+            var i = this.getRow(e.target);
+            var j = this.getColumn(e.target);
+            if (this.cells[i][j] == 1) {
+                this.cells[i][j] = 0;
+                e.target.classList.remove("alive");
+            } else {
+                this.cells[i][j] = 1;
+                e.target.classList.add("alive");
+            }
         }
     }
 
     draw() {
-        $(this.canvas).html("");
+        this.canvas.innerHTML = "";
         for (var i = 0; i < this.rows; i++) {
-            $(this.canvas).append("<div class='row'></div>");
+            var row = document.createElement("div");
+            row.className = "row";
+            this.cellsDomElements[i] = [];
             for (var j = 0; j < this.cols; j++) {
+                var cell;
                 if (this.cells[i][j] == 1) {
-                    $(this.canvas).find(".row").last().append("<div class='cell alive c" + j + " r" + i + "'></div>");
+                    cell = document.createElement("div");
+                    cell.className = "cell alive r" + i + " c" + j;
                 }
                 else {
-                    $(this.canvas).find(".row").last().append("<div class='cell c" + j + " r" + i + "'></div>");
+                    cell = document.createElement("div");
+                    cell.className = "cell r" + i + " c" + j;
                 }
+                cell.style.width = this.cellSize + "px";
+                cell.style.height = this.cellSize + "px";
+                row.appendChild(cell);
+                this.cellsDomElements[i][j] = cell;
             }
+            this.canvas.appendChild(row);
         }
     }
 
     start() {
         this.running = true;
         this.timer = setInterval(this.next.bind(this), this.interval);
-        $(this.canvas).css({backgroundColor: "#0f0"});
+        this.canvas.classList.remove("stopped");
+        this.canvas.classList.add("running");
     }
 
     stop() {
@@ -87,7 +103,8 @@ export default class GameOfLife {
             clearInterval(this.timer);
             this.timer = null;
         }
-        $(this.canvas).css({backgroundColor: "#f00"});
+        this.canvas.classList.remove("running");
+        this.canvas.classList.add("stopped");
     }
 
     toggle() {
@@ -105,10 +122,10 @@ export default class GameOfLife {
             for (var j = 0; j < this.cols; j++) {
                 nextCells[i][j] = this.getNextState(i, j);
                 if (nextCells[i][j] == 1) {
-                    $(".r" + i + ".c" + j).addClass("alive");
+                    this.cellsDomElements[i][j].classList.add("alive");
                 }
                 else {
-                    $(".r" + i + ".c" + j).removeClass("alive");
+                    this.cellsDomElements[i][j].classList.remove("alive");
                 }
             }
         }
@@ -161,23 +178,29 @@ export default class GameOfLife {
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
                 this.cells[i][j] = Math.floor(Math.random() * 2);
+                if (this.cells[i][j] == 1) {
+                    this.cellsDomElements[i][j].classList.add("alive");
+                } else {
+                    this.cellsDomElements[i][j].classList.remove("alive");
+                }
             }
         }
-        this.draw();
     }
 
-    setSpeed(speed) {
-        this.interval = 1000 / speed;
-        if (this.running) {
-            this.stop();
-            this.start();
+    setSpeed(interval) {
+        if (interval > 0) {
+            this.interval = interval;
+            if (this.running) {
+                this.stop();
+                this.start();
+            }
         }
     }
 
     setCellSize(cellSize) {
         this.cellSize = cellSize;
-        this.cols = this.width / this.cellSize;
-        this.rows = this.height / this.cellSize;
+        this.cols = parseInt(this.width / this.cellSize) - 2;
+        this.rows = parseInt(this.height / this.cellSize) - 2;
         this.initCells();
         this.draw();
     }
@@ -231,8 +254,8 @@ export default class GameOfLife {
     }
 
     resize() {
-        this.width = $(this.canvas).width();
-        this.height = $(this.canvas).height();
+        this.width = this.canvas.clientWidth;
+        this.height = this.canvas.clientHeight;
         this.rows = parseInt(this.height / this.cellSize) - 2;
         this.cols = parseInt(this.width / this.cellSize) - 2;
         this.initCells(this.cells);
@@ -284,9 +307,14 @@ export default class GameOfLife {
         for (var i = 0; i < layout.length; i++) {
             for (var j = 0; j < layout[i].length; j++) {
                 this.cells[i + rowOffset][j + colOffset] = layout[i][j];
+                if (layout[i][j] == 1) {
+                    this.cellsDomElements[i + rowOffset][j + colOffset].classList.add('alive');
+                }
+                else {
+                    this.cellsDomElements[i + rowOffset][j + colOffset].classList.remove('alive');
+                }
             }
         }
-        this.draw();
     }
 
     static initGliderGun1() {
@@ -479,7 +507,37 @@ export default class GameOfLife {
                 }
             }
         }
-
         return cells;
     }
+
+    static initFromText(fileName) {
+        var cells = [];
+        $.ajax({
+            url: "./layouts/" + fileName,
+            dataType: "text",
+            type: "GET",
+            success: function (data) {
+                var file = data.split("\r\n");
+                var rows = file.length;
+                var cols = file[0].length;
+                for (var i = 0; i < rows; i++) {
+                    cells[i] = [];
+                    for (var j = 0; j < cols; j++) {
+                        if (file[i][j] == "O") {
+                            cells[i][j] = 1;
+                        } else {
+                            cells[i][j] = 0;
+                        }
+                    }
+                }
+            },
+            error: function (data) {
+                console.log("error");
+            },
+            async: false
+        });
+        return cells;
+    }
+
+
 }
