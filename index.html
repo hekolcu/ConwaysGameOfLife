@@ -9,10 +9,27 @@
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"
         integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <div id="gol-main"></div><!-- main area for the game -->
+    <div id="gol-main"></div>
+    <div id="control-panel" class="">
+        <button class="btn btn-secondary btn-outline-light me-1">Reset</button>
+        <button class="btn btn-dark btn-outline-light me-1">1</button>
+        <button class="btn btn-dark btn-outline-light me-1">2</button>
+        <button class="btn btn-dark btn-outline-light me-1">3</button>
+        <button class="btn btn-dark btn-outline-light me-1">4</button>
+        <button class="btn btn-dark btn-outline-light me-1">5</button>
+        <button class="btn btn-dark btn-outline-light me-1">6</button>
+        <button class="btn btn-secondary btn-outline-light me-1">Random</button>
+        <button class="btn btn-secondary btn-outline-light me-1">Start</button>
+        <button class="btn btn-secondary btn-outline-light me-1">Stop</button>
+        <button id="CellSizeIncrement" class="btn btn-secondary btn-outline-light me-1">Cell Size+</button>
+        <button class="btn btn-secondary btn-outline-light me-1">Cell Size-</button>
+    </div>
     <script type="module">
         import GameOfLife from "./GameOfLife.js";
         $(function () {
@@ -21,6 +38,7 @@
             $(document).keypress(function (e) {
                 if (e.keyCode == 32) {
                     gol.toggle();
+                    $("#control-panel").css("background-color", gol.running ? "greenyellow" : "red");
                 }
                 else if (e.keyCode == 'i'.charCodeAt(0)) {
                     gol.setSpeed(gol.interval - 10);

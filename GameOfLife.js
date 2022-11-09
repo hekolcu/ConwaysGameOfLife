@@ -69,7 +69,7 @@ export default class GameOfLife {
         this.canvas.innerHTML = "";
         for (var i = 0; i < this.rows; i++) {
             var row = document.createElement("div");
-            row.className = "row";
+            row.className = "CellRow";
             this.cellsDomElements[i] = [];
             for (var j = 0; j < this.cols; j++) {
                 var cell;
