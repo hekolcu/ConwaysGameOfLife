@@ -197,14 +197,6 @@ export default class GameOfLife {
         }
     }
 
-    setCellSize(cellSize) {
-        this.cellSize = cellSize;
-        this.cols = parseInt(this.width / this.cellSize) - 2;
-        this.rows = parseInt(this.height / this.cellSize) - 2;
-        this.initCells();
-        this.draw();
-    }
-
     setWidth(width) {
         this.width = width;
         this.cols = this.width / this.cellSize;
@@ -239,9 +231,9 @@ export default class GameOfLife {
 
     setCellSize(cellSize) {
         this.cellSize = cellSize;
-        this.cols = this.width / this.cellSize;
-        this.rows = this.height / this.cellSize;
-        this.initCells();
+        this.cols = parseInt(this.width / this.cellSize) - 2;
+        this.rows = parseInt(this.height / this.cellSize) - 2;
+        this.initCells(this.cells);
         this.draw();
     }
 

@@ -16,9 +16,8 @@
     <script type="module">
         import GameOfLife from "./GameOfLife.js";
         $(function () {
-            var gol = new GameOfLife(5);
+            var gol = new GameOfLife(15);
             gol.init();
-            gol.setCellSize(30);
             $(document).keypress(function (e) {
                 if (e.keyCode == 32) {
                     gol.toggle();
@@ -29,11 +28,24 @@
                 else if (e.keyCode == 'o'.charCodeAt(0)) {
                     gol.setSpeed(gol.interval + 10);
                 }
-                else if (e.keyCode == 'r'.charCodeAt(0)) {
+                else if (e.keyCode == 'c'.charCodeAt(0)) {
                     gol.clear();
                 }
                 else if (e.keyCode == 's'.charCodeAt(0) && !gol.isRunning) {
                     gol.step();
+                }
+                else if (e.keyCode == 'r'.charCodeAt(0)) {
+                    gol.random();
+                }
+                else if (e.keyCode == 'm'.charCodeAt(0)) {
+                    if (gol.cellSize < 50) {
+                        gol.setCellSize(gol.cellSize + 5);
+                    }
+                }
+                else if (e.keyCode == 'n'.charCodeAt(0)) {
+                    if (gol.cellSize > 5) {
+                        gol.setCellSize(gol.cellSize - 5);
+                    }
                 }
                 else if (e.keyCode == '1'.charCodeAt(0) && !gol.isRunning) {
                     gol.clear();
@@ -65,7 +77,7 @@
                 gol.resize();
             });
         });
-    </script> <!-- script to initialize the website and main game functions -->
+    </script>
 </body>
 
 </html>
