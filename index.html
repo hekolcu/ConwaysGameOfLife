@@ -17,18 +17,20 @@
 <body>
     <div id="gol-main"></div>
     <div id="control-panel" class="">
-        <button class="btn btn-secondary btn-outline-light me-1">Reset</button>
-        <button class="btn btn-dark btn-outline-light me-1">1</button>
-        <button class="btn btn-dark btn-outline-light me-1">2</button>
-        <button class="btn btn-dark btn-outline-light me-1">3</button>
-        <button class="btn btn-dark btn-outline-light me-1">4</button>
-        <button class="btn btn-dark btn-outline-light me-1">5</button>
-        <button class="btn btn-dark btn-outline-light me-1">6</button>
-        <button class="btn btn-secondary btn-outline-light me-1">Random</button>
-        <button class="btn btn-secondary btn-outline-light me-1">Start</button>
-        <button class="btn btn-secondary btn-outline-light me-1">Stop</button>
-        <button id="CellSizeIncrement" class="btn btn-secondary btn-outline-light me-1">Cell Size+</button>
-        <button class="btn btn-secondary btn-outline-light me-1">Cell Size-</button>
+        <div id="resetBtn" class="btn btn-secondary btn-outline-light me-1">Reset</div>
+        <div id="load1Btn" class="btn btn-dark btn-outline-light me-1">1</div>
+        <div id="load2Btn" class="btn btn-dark btn-outline-light me-1">2</div>
+        <div id="load3Btn" class="btn btn-dark btn-outline-light me-1">3</div>
+        <div id="load4Btn" class="btn btn-dark btn-outline-light me-1">4</div>
+        <div id="load5Btn" class="btn btn-dark btn-outline-light me-1">5</div>
+        <div id="load6Btn" class="btn btn-dark btn-outline-light me-1">6</div>
+        <div id="randomBtn"class="btn btn-secondary btn-outline-light me-1">Random</div>
+        <div id="startStopBtn" class="btn btn-secondary btn-outline-light me-1">Start</div>
+        <div id="stepBtn" class="btn btn-secondary btn-outline-light me-1">Step</div>
+        <div id="CellSizeIncrement" class="btn btn-secondary btn-outline-light me-1">Cell Size+</div>
+        <div id="CellSizeDecrement" class="btn btn-secondary btn-outline-light me-1">Cell Size-</div>
+        <div id="speedDecrement" class="btn btn-secondary btn-outline-light me-1">Speed-</div>
+        <div id="speedIncrement" class="btn btn-secondary btn-outline-light me-1">Speed+</div>
     </div>
     <script type="module">
         import GameOfLife from "./GameOfLife.js";
@@ -38,7 +40,7 @@
             $(document).keypress(function (e) {
                 if (e.keyCode == 32) {
                     gol.toggle();
-                    $("#control-panel").css("background-color", gol.running ? "greenyellow" : "red");
+                    
                 }
                 else if (e.keyCode == 'i'.charCodeAt(0)) {
                     gol.setSpeed(gol.interval - 10);
@@ -90,10 +92,75 @@
                     gol.clear();
                     gol.loadLayout(GameOfLife.initFromText("p45glidergunoriginal.txt"), GameOfLife.Layouts.CENTER);
                 }
+                updateRunningStatus();
+            });
+            $("#control-panel #resetBtn").click(function () {
+                gol.stop();
+                gol.clear();
+            });
+            $("#control-panel #load1Btn").click(function () {
+                gol.clear();
+                gol.loadLayout(GameOfLife.initGliderGun1(), GameOfLife.Layouts.TOP_LEFT);
+            });
+            $("#control-panel #load2Btn").click(function () {
+                gol.clear();
+                gol.loadLayout(GameOfLife.initFlower1(), GameOfLife.Layouts.CENTER);
+            });
+            $("#control-panel #load3Btn").click(function () {
+                gol.clear();
+                gol.loadLayout(GameOfLife.initGliderGun1(), GameOfLife.Layouts.TOP_CENTER);
+                gol.loadLayout(GameOfLife.initFlower1(), GameOfLife.Layouts.BOTTOM_LEFT);
+            });
+            $("#control-panel #load4Btn").click(function () {
+                gol.clear();
+                gol.loadLayout(GameOfLife.maxDensityCells(), GameOfLife.Layouts.CENTER);
+            });
+            $("#control-panel #load5Btn").click(function () {
+                gol.clear();
+                gol.loadLayout(GameOfLife.initFromText("originalp48glidergun.txt"), GameOfLife.Layouts.TOP_LEFT);
+            });
+            $("#control-panel #load6Btn").click(function () {
+                gol.clear();
+                gol.loadLayout(GameOfLife.initFromText("p45glidergunoriginal.txt"), GameOfLife.Layouts.CENTER);
+            });
+            $("#control-panel #startStopBtn").click(function () {
+                gol.toggle();
+                $("#control-panel").css("background-color", gol.running ? "greenyellow" : "red");
+                this.innerText = gol.running ? "Stop" : "Start";
+            });
+            $("#control-panel #CellSizeIncrement").click(function () {
+                if (gol.cellSize < 50) {
+                    gol.setCellSize(gol.cellSize + 5);
+                }
+            });
+            $("#control-panel #CellSizeDecrement").click(function () {
+                if (gol.cellSize > 5) {
+                    gol.setCellSize(gol.cellSize - 5);
+                }
+            });
+            $("#control-panel #stepBtn").click(function () {
+                gol.step();
+            });
+            $("#control-panel #randomBtn").click(function () {
+                gol.stop();
+                gol.random();
+            });
+            $("#control-panel #speedIncrement").click(function () {
+                gol.setSpeed(gol.interval - 10);
+            });
+            $("#control-panel #speedDecrement").click(function () {
+                gol.setSpeed(gol.interval + 10);
+            });
+            $("#control-panel div").click(function () {
+                updateRunningStatus();
             });
             $(window).resize(function () {
                 gol.resize();
             });
+            function updateRunningStatus() {
+                $("#control-panel").css("background-color", gol.running ? "greenyellow" : "red");
+                $("#gol-main").css("background-color", gol.running ? "greenyellow" : "red");
+            }
         });
     </script>
 </body>

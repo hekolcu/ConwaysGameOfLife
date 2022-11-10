@@ -133,8 +133,8 @@ export default class GameOfLife {
     }
 
     step() {
-        this.stop();
-        this.next();
+        if (!this.running)
+            this.next();
     }
 
     getNextState(i, j) {

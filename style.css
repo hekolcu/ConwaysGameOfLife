@@ -65,6 +65,6 @@ body {
     background-color: red;
 }
 
-#control-panel>button {
+#control-panel>div {
     height: 40px;
 }
